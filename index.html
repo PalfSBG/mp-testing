@@ -328,17 +328,17 @@ function loadBrandData(brand) {
     }
     const csvUrl = `https://raw.githubusercontent.com/palfsbg/mp-testing/main/${filename}`;
 
-            return new Promise((resolve, reject) => {
-                Plotly.d3.csv(csvUrl, function(data) {
-                    if (data) {
-                        allBrandData[brand] = data;
-                        resolve();
-                    } else {
-                        reject(`Failed to load ${brand} data`);
-                    }
-                }).catch(reject);
-            });
-        }
+    return new Promise((resolve, reject) => {
+        Plotly.d3.csv(csvUrl, function(data) {
+            if (data && data.length > 0) {
+                allBrandData[brand] = data;
+                resolve();
+            } else {
+                reject(`Failed to load ${brand} data`);
+            }
+        }).catch(reject);
+    });
+}
 
         function updateChart(brand, metric) {
             const data = allBrandData[brand];
