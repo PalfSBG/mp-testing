@@ -50,7 +50,7 @@
         const csvUrl = "https://raw.githubusercontent.com/palfsbg/mp-testing/main/traffic_overview.csv";
 
         Plotly.d3.csv(csvUrl, function(data) {
-            const xAxis = data.map((_, i) => i + 1);
+            const dates = data.map(row => row["event_date"]);
             const uniqueVisitors = data.map(row => +row["unique_visitors"]);
             const loggedInUsers = data.map(row => +row["logged_in_users"]);
             const totalVisits = data.map(row => +row["total_visits"]);
@@ -59,7 +59,7 @@
             // Chart 1: Unique Visitors
             Plotly.newPlot('uniqueVisitors', 
                 [{
-                    x: xAxis,
+                    x: dates,
                     y: uniqueVisitors,
                     type: 'scatter',
                     mode: 'lines+markers',
@@ -72,7 +72,7 @@
             // Chart 2: Logged-In Users
             Plotly.newPlot('loggedInUsers', 
                 [{
-                    x: xAxis,
+                    x: dates,
                     y: loggedInUsers,
                     type: 'scatter',
                     mode: 'lines+markers',
@@ -85,7 +85,7 @@
             // Chart 3: Total Visits
             Plotly.newPlot('totalVisits', 
                 [{
-                    x: xAxis,
+                    x: dates,
                     y: totalVisits,
                     type: 'scatter',
                     mode: 'lines+markers',
@@ -98,7 +98,7 @@
             // Chart 4: Total Logged-In Visits
             Plotly.newPlot('totalLoggedInVisits', 
                 [{
-                    x: xAxis,
+                    x: dates,
                     y: totalLoggedInVisits,
                     type: 'scatter',
                     mode: 'lines+markers',
