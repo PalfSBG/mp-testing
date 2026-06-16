@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Betfair Product Overview</title>
+    <title>Product Overview</title>
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <style>
         * {
@@ -41,6 +41,34 @@
             opacity: 0.9;
         }
 
+        .brand-selector {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .brand-selector label {
+            color: white;
+            font-weight: 600;
+            margin-right: 15px;
+            font-size: 16px;
+        }
+
+        .brand-selector select {
+            padding: 12px 16px;
+            font-size: 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            background: white;
+            color: #003d7a;
+            font-weight: 600;
+            min-width: 200px;
+        }
+
+        .brand-selector select:focus {
+            outline: 2px solid white;
+        }
+
         .container {
             max-width: 1400px;
             margin: 0 auto;
@@ -48,6 +76,7 @@
             grid-template-columns: 1fr 1fr;
             gap: 30px;
             align-items: start;
+            margin-bottom: 40px;
         }
 
         .section {
@@ -142,6 +171,32 @@
             color: #003d7a;
         }
 
+        .comparison-section {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .comparison-section h2 {
+            color: #003d7a;
+            font-size: 24px;
+            margin-bottom: 25px;
+            font-weight: 700;
+        }
+
+        #comparisonChart {
+            height: 450px;
+        }
+
+        .loading {
+            text-align: center;
+            color: #999;
+            padding: 20px;
+        }
+
         @media (max-width: 1024px) {
             .container {
                 grid-template-columns: 1fr;
@@ -152,10 +207,19 @@
 <body>
     <div class="header">
         <svg class="logo" viewBox="0 0 200 60" xmlns="http://www.w3.org/2000/svg">
-            <text x="10" y="45" font-size="40" font-weight="bold" fill="white">betfair</text>
+            <text x="10" y="45" font-size="40" font-weight="bold" fill="white">Flutter UKI</text>
         </svg>
         <h1>Product Overview</h1>
         <p class="subtitle">Traffic & Engagement Metrics</p>
+    </div>
+
+    <div class="brand-selector">
+        <label for="brandSelect">Select Brand:</label>
+        <select id="brandSelect">
+            <option value="betfair">Betfair</option>
+            <option value="paddypower">Paddy Power</option>
+            <option value="skybet">Sky Bet</option>
+        </select>
     </div>
 
     <div class="container">
@@ -175,7 +239,7 @@
 
         <!-- Right Column: Narrative -->
         <div class="section narrative-section">
-            <h2>7-Day Summary</h2>
+            <h2 id="brandTitle">Betfair</h2>
             
             <div class="metric-card">
                 <div class="metric-label">Average - Last 7 Days</div>
@@ -183,10 +247,8 @@
                 <div class="metric-period" id="metricTitle">Loading...</div>
             </div>
 
-            <div class="narrative-text">
-                <p id="narrativeText">
-                    This overview provides key insights into Betfair product performance, tracking traffic patterns and user engagement across our platform. Monitor trends in visitor activity, logged-in user behavior, and overall platform utilization to understand product health and identify growth opportunities.
-                </p>
+            <div class="narrative-text" id="narrativeText">
+                This overview provides key insights into product performance, tracking traffic patterns and user engagement across our platform.
             </div>
 
             <div class="insight" id="insight">
@@ -195,9 +257,19 @@
         </div>
     </div>
 
+    <!-- Comparison Section -->
+    <div class="comparison-section">
+        <h2>Brand Comparison - All Metrics</h2>
+        <div id="comparisonChart"></div>
+    </div>
+
     <script>
-        const csvUrl = "https://raw.githubusercontent.com/palfsbg/mp-testing/main/traffic_overview.csv";
-        
+        const brands = {
+            betfair: { name: 'Betfair', color: '#1f77b4' },
+            paddypower: { name: 'Paddy Power', color: '#ff7f0e' },
+            skybet: { name: 'Sky Bet', color: '#2ca02c' }
+        };
+
         const colors = {
             unique_visitors: '#1f77b4',
             logged_in_users: '#ff7f0e',
@@ -213,29 +285,67 @@
         };
 
         const narratives = {
-            unique_visitors: 'Unique Visitors represents the number of distinct individuals accessing the Betfair platform. This metric helps identify overall reach and market penetration.',
+            unique_visitors: 'Unique Visitors represents the number of distinct individuals accessing the platform. This metric helps identify overall reach and market penetration.',
             logged_in_users: 'Logged-In Users indicates active, authenticated users engaging with the platform. This is a key indicator of user commitment and platform stickiness.',
             total_visits: 'Total Visits counts all sessions, including repeat visits from the same users. This metric reflects overall platform traffic intensity.',
             total_logged_in_visits: 'Logged-In Visits measures authenticated sessions, showing how engaged registered users are with the platform content and features.'
         };
 
-        let allData; // Store the CSV data globally
+        let allBrandData = {}; // Store all brand data
 
-        Plotly.d3.csv(csvUrl, function(data) {
-            allData = data;
-            
-            // Load initial chart
-            updateChart('unique_visitors');
+        // Load all brand data on page load
+        Promise.all([
+            loadBrandData('betfair'),
+            loadBrandData('paddypower'),
+            loadBrandData('skybet')
+        ]).then(() => {
+            // Update initial charts
+            updateChart('betfair', 'unique_visitors');
+            updateComparisonChart('unique_visitors');
 
-            // Add change event listener
+            // Add event listeners
+            document.getElementById('brandSelect').addEventListener('change', function(e) {
+                const metric = document.getElementById('metricSelect').value;
+                updateChart(e.target.value, metric);
+                updateComparisonChart(metric);
+            });
+
             document.getElementById('metricSelect').addEventListener('change', function(e) {
-                updateChart(e.target.value);
+                const brand = document.getElementById('brandSelect').value;
+                updateChart(brand, e.target.value);
+                updateComparisonChart(e.target.value);
             });
         });
 
-        function updateChart(metric) {
-            const dates = allData.map(row => row["event_date"]);
-            const values = allData.map(row => +row[metric]);
+function loadBrandData(brand) {
+    let filename;
+    if (brand === 'betfair') {
+        filename = 'bf_traffic_overview.csv';
+    } else if (brand === 'paddypower') {
+        filename = 'pp_traffic_overview.csv';
+    } else if (brand === 'skybet') {
+        filename = 'sbg_traffic_overview.csv';
+    }
+    const csvUrl = `https://raw.githubusercontent.com/palfsbg/mp-testing/main/${filename}`;
+
+            return new Promise((resolve, reject) => {
+                Plotly.d3.csv(csvUrl, function(data) {
+                    if (data) {
+                        allBrandData[brand] = data;
+                        resolve();
+                    } else {
+                        reject(`Failed to load ${brand} data`);
+                    }
+                }).catch(reject);
+            });
+        }
+
+        function updateChart(brand, metric) {
+            const data = allBrandData[brand];
+            if (!data) return;
+
+            const dates = data.map(row => row["event_date"]);
+            const values = data.map(row => +row[metric]);
 
             const trace = {
                 x: dates,
@@ -247,7 +357,7 @@
             };
 
             const layout = {
-                title: titles[metric],
+                title: `${brands[brand].name} - ${titles[metric]}`,
                 height: 450,
                 xaxis: { title: 'Date' },
                 yaxis: { title: 'Count' },
@@ -258,30 +368,60 @@
 
             Plotly.newPlot('chart', [trace], layout, { responsive: true });
 
-            // Update narrative section
-            updateNarrative(metric, values);
+            // Update narrative
+            updateNarrative(brand, metric, values);
         }
 
-        function updateNarrative(metric, values) {
-            // Calculate last 7 days average
+        function updateNarrative(brand, metric, values) {
             const last7Days = values.slice(-7);
             const average = (last7Days.reduce((a, b) => a + b, 0) / last7Days.length).toFixed(0);
             const formatted = parseInt(average).toLocaleString();
 
-            // Update metric card
+            document.getElementById('brandTitle').textContent = brands[brand].name;
             document.getElementById('avgValue').textContent = formatted;
             document.getElementById('metricTitle').textContent = `${titles[metric]} - 7 Day Average`;
-
-            // Update narrative text
             document.getElementById('narrativeText').textContent = narratives[metric];
 
-            // Update insight
             const minVal = Math.min(...last7Days);
             const maxVal = Math.max(...last7Days);
             const variance = (((maxVal - minVal) / minVal) * 100).toFixed(1);
-            
+
             const insightText = `${titles[metric]} has averaged ${formatted} over the last 7 days, with a variance of ${variance}% between peak and low performance.`;
             document.getElementById('insightText').textContent = insightText;
+        }
+
+        function updateComparisonChart(metric) {
+            const traces = [];
+
+            // Create a trace for each brand
+            Object.keys(allBrandData).forEach(brand => {
+                const data = allBrandData[brand];
+                const dates = data.map(row => row["event_date"]);
+                const values = data.map(row => +row[metric]);
+
+                traces.push({
+                    x: dates,
+                    y: values,
+                    type: 'scatter',
+                    mode: 'lines+markers',
+                    name: brands[brand].name,
+                    line: { color: brands[brand].color, width: 2 },
+                    marker: { size: 5 }
+                });
+            });
+
+            const layout = {
+                title: `Brand Comparison - ${titles[metric]}`,
+                height: 450,
+                xaxis: { title: 'Date' },
+                yaxis: { title: 'Count' },
+                plot_bgcolor: '#f8f9fa',
+                paper_bgcolor: 'white',
+                margin: { t: 40, r: 20, b: 40, l: 60 },
+                hovermode: 'x unified'
+            };
+
+            Plotly.newPlot('comparisonChart', traces, layout, { responsive: true });
         }
     </script>
 </body>
