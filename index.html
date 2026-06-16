@@ -6,139 +6,572 @@
     <title>Product Overview</title>
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <style>
-@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap");
-:root{--navy:#0F1F4A;--cyan:#15B5DB;--pink:#EE3A7C;--ink:#1A2238;--ink-2:#4A5170;--ink-3:#7B829B;--line:#E5E7ED;--line-2:#CBD0DC;--bg:#FFFFFF;--bg-2:#F7F8FB;--bg-3:#EEF0F5;--font-display:'Poppins',sans-serif;--font-body:'Inter',sans-serif;}
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:var(--font-body);background:#fff;color:var(--ink);padding:0;line-height:1.5}
-.header{background:#fff;border-bottom:1px solid var(--line);padding:18px 32px;position:sticky;top:0;z-index:10;text-align:left}
-.logo{display:none}.header:before{content:'Flutter UKI Product Overview';font-family:var(--font-display);font-size:28px;font-weight:700;color:var(--navy)}
-.brand-selector{max-width:1440px;margin:24px auto;padding:0 32px}
-.brand-selector label,.controls label{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-3);font-weight:600;display:block;margin-bottom:6px}
-select{font-family:var(--font-body);font-size:13px;padding:8px 32px 8px 10px;border:1px solid var(--line-2);border-radius:4px;background:#fff;color:var(--ink);font-weight:500}
-.tabs-container,.comparison-section,.section{background:#fff;border:1px solid var(--line);border-radius:6px;box-shadow:none}
-.tabs-container{max-width:1440px;margin:0 auto 24px}
-.tab-buttons{background:var(--bg-2);border-bottom:1px solid var(--line)}
-.tab-button{font-family:var(--font-body);font-size:13px;color:var(--ink-2);padding:14px 18px;border-bottom:2px solid transparent}
-.tab-button.active{background:#fff;color:var(--navy);border-bottom-color:var(--pink)}
-.tab-content{padding:24px}
-.container{display:grid;grid-template-columns:1.2fr .8fr;gap:24px}
-.section{padding:24px}
-.narrative-section h2,.comparison-section h2{font-family:var(--font-display);color:var(--navy);font-size:24px}
-.metric-card{background:var(--bg-2);border:1px solid var(--line);border-left:4px solid var(--cyan);padding:18px;border-radius:6px}
-.metric-label{font-size:11px;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
-.metric-value{font-family:var(--font-display);font-size:32px;color:var(--navy)}
-.metric-period{font-size:12px;color:var(--ink-3)}
-.narrative-text{color:var(--ink-2)}
-.insight{background:#F5FCFE;border-left:4px solid var(--cyan);color:var(--navy)}
-.comparison-section{max-width:1440px;margin:24px auto;padding:24px}
-.placeholder-content{background:var(--bg-2);border:1px dashed var(--line-2);color:var(--ink-3)}
-@media(max-width:1024px){.container{grid-template-columns:1fr}.header{padding:16px}}
-</style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #003d7a 0%, #005eb8 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        main {
+            flex: 1;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .logo {
+            height: 50px;
+            margin-bottom: 15px;
+        }
+
+        h1 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .brand-selector {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .brand-selector label {
+            color: white;
+            font-weight: 600;
+            margin-right: 15px;
+            font-size: 16px;
+        }
+
+        .brand-selector select {
+            padding: 12px 16px;
+            font-size: 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            background: white;
+            color: #003d7a;
+            font-weight: 600;
+            min-width: 200px;
+        }
+
+        .brand-selector select:focus {
+            outline: 2px solid white;
+        }
+
+        /* Tab Styles */
+        .tabs-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            margin-bottom: 40px;
+        }
+
+        .tab-buttons {
+            display: flex;
+            background: #f0f0f0;
+            border-bottom: 2px solid #e0e0e0;
+            overflow-x: auto;
+        }
+
+        .tab-button {
+            padding: 16px 24px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            color: #666;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            border-bottom: 3px solid transparent;
+            margin-bottom: -2px;
+        }
+
+        .tab-button:hover {
+            color: #003d7a;
+            background: #f9f9f9;
+        }
+
+        .tab-button.active {
+            color: #003d7a;
+            border-bottom-color: #005eb8;
+            background: white;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 30px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            align-items: start;
+        }
+
+        .section {
+            background: white;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .controls {
+            margin-bottom: 25px;
+        }
+
+        .controls label {
+            font-weight: 600;
+            margin-right: 10px;
+            color: #003d7a;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .controls select {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: border-color 0.3s;
+        }
+
+        .controls select:hover,
+        .controls select:focus {
+            border-color: #005eb8;
+            outline: none;
+        }
+
+        #chart {
+            height: 450px;
+        }
+
+        .narrative-section h2 {
+            color: #003d7a;
+            font-size: 24px;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .metric-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            border-left: 4px solid #005eb8;
+        }
+
+        .metric-label {
+            font-size: 14px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .metric-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: #003d7a;
+            margin-bottom: 5px;
+        }
+
+        .metric-period {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .narrative-text {
+            color: #333;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            font-size: 15px;
+        }
+
+        .insight {
+            background: #e8f4fd;
+            border-left: 4px solid #005eb8;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #003d7a;
+        }
+
+        .comparison-section {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            margin-bottom: 40px;
+        }
+
+        .comparison-section h2 {
+            color: #003d7a;
+            font-size: 24px;
+            margin-bottom: 25px;
+            font-weight: 700;
+        }
+
+        #comparisonChart {
+            height: 450px;
+        }
+
+        .placeholder-content {
+            background: #f8f9fa;
+            padding: 40px 20px;
+            text-align: center;
+            color: #999;
+            border-radius: 4px;
+            min-height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Footer Styles */
+        .footer-strap {
+            background: #f5f5f5;
+            border-top: 1px solid #e0e0e0;
+            padding: 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: auto;
+            font-size: 13px;
+            color: #666;
+        }
+
+        .footer-strap .left {
+            flex: 1;
+        }
+
+        .footer-strap .right {
+            font-weight: 600;
+            color: #333;
+            white-space: nowrap;
+            margin-left: 20px;
+        }
+
+        .threshold-wrap {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+            position: relative;
+        }
+
+        .threshold-chip {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            user-select: none;
+        }
+
+        .threshold-chip.pos {
+            background: #e8f5e9;
+            color: #2e7d32;
+            border: 1px solid #a5d6a7;
+        }
+
+        .threshold-chip.pos:hover {
+            background: #c8e6c9;
+        }
+
+        .threshold-chip.neg {
+            background: #ffebee;
+            color: #c62828;
+            border: 1px solid #ef9a9a;
+        }
+
+        .threshold-chip.neg:hover {
+            background: #ffcdd2;
+        }
+
+        .threshold-edit-hint {
+            font-size: 11px;
+            color: #999;
+            margin-left: 4px;
+        }
+
+        .threshold-popover {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            padding: 16px;
+            margin-top: 8px;
+            min-width: 300px;
+            z-index: 1000;
+        }
+
+        .threshold-popover.active {
+            display: block;
+        }
+
+        .threshold-popover-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 4px;
+            font-size: 14px;
+        }
+
+        .threshold-popover-sub {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 12px;
+        }
+
+        .threshold-popover-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .threshold-popover-row label {
+            flex: 1;
+            font-size: 12px;
+            color: #666;
+            font-weight: 500;
+        }
+
+        .threshold-popover-row input {
+            width: 60px;
+            padding: 6px 8px;
+            border: 1px solid #e0e0e0;
+            border-radius: 3px;
+            font-size: 12px;
+        }
+
+        .threshold-popover-unit {
+            font-size: 12px;
+            color: #999;
+            width: 30px;
+        }
+
+        .threshold-popover-footer {
+            border-top: 1px solid #e0e0e0;
+            padding-top: 8px;
+            margin-top: 12px;
+        }
+
+        .threshold-popover-reset {
+            font-size: 12px;
+            color: #005eb8;
+            cursor: pointer;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+
+        .threshold-popover-reset:hover {
+            color: #003d7a;
+            text-decoration: underline;
+        }
+
+        @media (max-width: 1024px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+
+            .tab-button {
+                padding: 12px 16px;
+                font-size: 14px;
+            }
+
+            .footer-strap {
+                flex-direction: column;
+                gap: 12px;
+                align-items: flex-start;
+            }
+
+            .footer-strap .right {
+                margin-left: 0;
+                align-self: flex-end;
+            }
+        }
+    </style>
 </head>
 <body>
-    <div class="header">
-        <svg class="logo" viewBox="0 0 200 60" xmlns="http://www.w3.org/2000/svg">
-            <text x="10" y="45" font-size="40" font-weight="bold" fill="white">Flutter UKI Product Overview</text>
-        </svg>
-    </div>
-
-    <div class="brand-selector">
-        <label for="brandSelect">Select Brand:</label>
-        <select id="brandSelect">
-            <option value="betfair">Betfair</option>
-            <option value="paddypower">Paddy Power</option>
-            <option value="skybet">Sky Bet</option>
-        </select>
-    </div>
-
-    <!-- Tabs Container -->
-    <div class="tabs-container">
-        <div class="tab-buttons">
-            <button class="tab-button active" data-tab="traffic">Traffic & Engagement</button>
-            <button class="tab-button" data-tab="conversion">Conversion</button>
-            <button class="tab-button" data-tab="popular-pages">Popular Pages</button>
-            <button class="tab-button" data-tab="customer">Customer</button>
+    <main>
+        <div class="header">
+            <svg class="logo" viewBox="0 0 200 60" xmlns="http://www.w3.org/2000/svg">
+                <text x="10" y="45" font-size="40" font-weight="bold" fill="white">Flutter UKI Product Overview</text>
+            </svg>
         </div>
 
-        <!-- Traffic & Engagement Tab -->
-        <div id="traffic" class="tab-content active">
-            <div class="container">
-                <!-- Left Column: Chart -->
-                <div class="section">
-                    <div class="controls">
-                        <label for="metricSelect">Select Metric:</label>
-                        <select id="metricSelect">
-                            <option value="unique_visitors">Unique Visitors</option>
-                            <option value="logged_in_users">Logged-In Users</option>
-                            <option value="total_visits">Total Visits</option>
-                            <option value="total_logged_in_visits">Total Logged-In Visits</option>
-                        </select>
-                    </div>
-                    <div id="chart"></div>
-                </div>
+        <div class="brand-selector">
+            <label for="brandSelect">Select Brand:</label>
+            <select id="brandSelect">
+                <option value="betfair">Betfair</option>
+                <option value="paddypower">Paddy Power</option>
+                <option value="skybet">Sky Bet</option>
+            </select>
+        </div>
 
-                <!-- Right Column: Narrative -->
-                <div class="section narrative-section">
-                    <h2 id="brandTitle">Betfair</h2>
+        <!-- Tabs Container -->
+        <div class="tabs-container">
+            <div class="tab-buttons">
+                <button class="tab-button active" data-tab="traffic">Traffic & Engagement</button>
+                <button class="tab-button" data-tab="conversion">Conversion</button>
+                <button class="tab-button" data-tab="popular-pages">Popular Pages</button>
+                <button class="tab-button" data-tab="customer">Customer</button>
+            </div>
+
+            <!-- Traffic & Engagement Tab -->
+            <div id="traffic" class="tab-content active">
+                <div class="container">
+                    <!-- Left Column: Chart -->
+                    <div class="section">
+                        <div class="controls">
+                            <label for="metricSelect">Select Metric:</label>
+                            <select id="metricSelect">
+                                <option value="unique_visitors">Unique Visitors</option>
+                                <option value="logged_in_users">Logged-In Users</option>
+                                <option value="total_visits">Total Visits</option>
+                                <option value="total_logged_in_visits">Total Logged-In Visits</option>
+                            </select>
+                        </div>
+                        <div id="chart"></div>
+                    </div>
+
+                    <!-- Right Column: Narrative -->
+                    <div class="section narrative-section">
+                        <h2 id="brandTitle">Betfair</h2>
+                        
+                        <div class="metric-card">
+                            <div class="metric-label">Average - Last 7 Days</div>
+                            <div class="metric-value" id="avgValue">—</div>
+                            <div class="metric-period" id="metricTitle">Loading...</div>
+                        </div>
                     
-                    <div class="metric-card">
-                        <div class="metric-label">Average - Last 7 Days</div>
-                        <div class="metric-value" id="avgValue">—</div>
-                        <div class="metric-period" id="metricTitle">Loading...</div>
+                        <div class="metric-card">
+                            <div class="metric-label">Conversion To Login - Last 7 Days</div>
+                            <div class="metric-value" id="conversionValue">—</div>
+                            <div class="metric-period">Average Conversion Rate</div>
+                        </div>
+                    
+                        <div class="narrative-text" id="narrativeText">
+                            This overview provides key insights into product performance, tracking traffic patterns and user engagement across our platform.
+                        </div>
+                    
+                        <div class="insight" id="insight">
+                            <strong>📊 Insight:</strong> <span id="insightText">Select a metric to view detailed analysis</span>
+                        </div>
                     </div>
-                
-                    <div class="metric-card">
-                        <div class="metric-label">Conversion To Login - Last 7 Days</div>
-                        <div class="metric-value" id="conversionValue">—</div>
-                        <div class="metric-period">Average Conversion Rate</div>
-                    </div>
-                
-                    <div class="narrative-text" id="narrativeText">
-                        This overview provides key insights into product performance, tracking traffic patterns and user engagement across our platform.
-                    </div>
-                
-                    <div class="insight" id="insight">
-                        <strong>📊 Insight:</strong> <span id="insightText">Select a metric to view detailed analysis</span>
+                </div>
+
+                <!-- Comparison Chart -->
+                <div class="comparison-section">
+                    <h2>Brand Comparison - All Metrics</h2>
+                    <div id="comparisonChart"></div>
+                </div>
+            </div>
+
+            <!-- Conversion Tab -->
+            <div id="conversion" class="tab-content">
+                <div class="placeholder-content">
+                    <div>
+                        <h3 style="color: #003d7a; margin-bottom: 10px;">Conversion Data</h3>
+                        <p>Conversion metrics and analysis will be displayed here</p>
                     </div>
                 </div>
             </div>
 
-            <!-- Comparison Chart -->
-            <div class="comparison-section">
-                <h2>Brand Comparison - All Metrics</h2>
-                <div id="comparisonChart"></div>
+            <!-- Popular Pages Tab -->
+            <div id="popular-pages" class="tab-content">
+                <div class="placeholder-content">
+                    <div>
+                        <h3 style="color: #003d7a; margin-bottom: 10px;">Popular Pages</h3>
+                        <p>Top performing pages and content analysis will be displayed here</p>
+                    </div>
+                </div>
             </div>
-        </div>
 
-        <!-- Conversion Tab -->
-        <div id="conversion" class="tab-content">
-            <div class="placeholder-content">
-                <div>
-                    <h3 style="color: #003d7a; margin-bottom: 10px;">Conversion Data</h3>
-                    <p>Conversion metrics and analysis will be displayed here</p>
+            <!-- Customer Tab -->
+            <div id="customer" class="tab-content">
+                <div class="placeholder-content">
+                    <div>
+                        <h3 style="color: #003d7a; margin-bottom: 10px;">Customer Insights</h3>
+                        <p>Customer behavior and demographic data will be displayed here</p>
+                    </div>
                 </div>
             </div>
         </div>
+    </main>
 
-        <!-- Popular Pages Tab -->
-        <div id="popular-pages" class="tab-content">
-            <div class="placeholder-content">
-                <div>
-                    <h3 style="color: #003d7a; margin-bottom: 10px;">Popular Pages</h3>
-                    <p>Top performing pages and content analysis will be displayed here</p>
+    <!-- Footer -->
+    <div class="footer-strap">
+        <div class="left">
+            <div class="threshold-wrap">
+                <span class="threshold-chip pos" id="threshold-chip-pos" role="button" tabindex="0" title="Click to adjust thresholds">Greater than +10% or +5.0pts</span>
+                <span class="threshold-chip neg" id="threshold-chip-neg" role="button" tabindex="0" title="Click to adjust thresholds">Less than -10% or -5.0pts</span>
+                <span class="threshold-edit-hint">✎ click to edit</span>
+                <div class="threshold-popover" id="threshold-popover" role="dialog" aria-label="Edit highlight thresholds">
+                    <div class="threshold-popover-title">Highlight thresholds</div>
+                    <div class="threshold-popover-sub">Applies to YoY % and pp delta cells across the dashboard.</div>
+                    <div class="threshold-popover-row">
+                        <label for="threshold-pct-input">% YoY change</label>
+                        <input type="number" id="threshold-pct-input" min="0" max="100" step="1" value="10">
+                        <span class="threshold-popover-unit">%</span>
+                    </div>
+                    <div class="threshold-popover-row">
+                        <label for="threshold-pp-input">Percentage-point delta</label>
+                        <input type="number" id="threshold-pp-input" min="0" max="50" step="0.5" value="5">
+                        <span class="threshold-popover-unit">pts</span>
+                    </div>
+                    <div class="threshold-popover-footer">
+                        <span class="threshold-popover-reset" id="threshold-reset" role="button" tabindex="0">Reset to defaults</span>
+                    </div>
                 </div>
             </div>
         </div>
-
-        <!-- Customer Tab -->
-        <div id="customer" class="tab-content">
-            <div class="placeholder-content">
-                <div>
-                    <h3 style="color: #003d7a; margin-bottom: 10px;">Customer Insights</h3>
-                    <p>Customer behavior and demographic data will be displayed here</p>
-                </div>
-            </div>
-        </div>
+        <div class="right">UKI BUSINESS INTELLIGENCE</div>
     </div>
 
     <script>
@@ -170,6 +603,40 @@ select{font-family:var(--font-body);font-size:13px;padding:8px 32px 8px 10px;bor
         };
 
         let allBrandData = {}; // Store all brand data
+
+        // Footer threshold popover functionality
+        document.getElementById('threshold-chip-pos').addEventListener('click', togglePopover);
+        document.getElementById('threshold-chip-neg').addEventListener('click', togglePopover);
+        document.getElementById('threshold-reset').addEventListener('click', resetThresholds);
+
+        function togglePopover() {
+            const popover = document.getElementById('threshold-popover');
+            popover.classList.toggle('active');
+        }
+
+        function resetThresholds() {
+            document.getElementById('threshold-pct-input').value = 10;
+            document.getElementById('threshold-pp-input').value = 5;
+            updateThresholdChips();
+        }
+
+        function updateThresholdChips() {
+            const pct = document.getElementById('threshold-pct-input').value;
+            const pp = document.getElementById('threshold-pp-input').value;
+            document.getElementById('threshold-chip-pos').textContent = `Greater than +${pct}% or +${pp}pts`;
+            document.getElementById('threshold-chip-neg').textContent = `Less than -${pct}% or -${pp}pts`;
+        }
+
+        document.getElementById('threshold-pct-input').addEventListener('change', updateThresholdChips);
+        document.getElementById('threshold-pp-input').addEventListener('change', updateThresholdChips);
+
+        // Close popover when clicking outside
+        document.addEventListener('click', function(e) {
+            const thresholdWrap = document.querySelector('.threshold-wrap');
+            if (!thresholdWrap.contains(e.target)) {
+                document.getElementById('threshold-popover').classList.remove('active');
+            }
+        });
 
         // Tab switching
         document.querySelectorAll('.tab-button').forEach(button => {
