@@ -3,111 +3,286 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Traffic Overview</title>
+    <title>Betfair Product Overview</title>
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            background-color: #f5f5f5;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #003d7a 0%, #005eb8 100%);
+            min-height: 100vh;
+            padding: 20px;
         }
-        h1 {
+
+        .header {
             text-align: center;
-            color: #333;
+            color: white;
+            margin-bottom: 30px;
         }
-        .charts-container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
+
+        .logo {
+            height: 50px;
+            margin-bottom: 15px;
+        }
+
+        h1 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .container {
             max-width: 1400px;
             margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            align-items: start;
         }
-        .chart-box {
+
+        .section {
             background: white;
-            padding: 15px;
             border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            height: 450px;
-            min-height: 450px;
+            padding: 30px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         }
-        @media (max-width: 768px) {
-            .charts-container {
+
+        .controls {
+            margin-bottom: 25px;
+        }
+
+        .controls label {
+            font-weight: 600;
+            margin-right: 10px;
+            color: #003d7a;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .controls select {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: border-color 0.3s;
+        }
+
+        .controls select:hover,
+        .controls select:focus {
+            border-color: #005eb8;
+            outline: none;
+        }
+
+        #chart {
+            height: 450px;
+        }
+
+        .narrative-section h2 {
+            color: #003d7a;
+            font-size: 24px;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .metric-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            border-left: 4px solid #005eb8;
+        }
+
+        .metric-label {
+            font-size: 14px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .metric-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: #003d7a;
+            margin-bottom: 5px;
+        }
+
+        .metric-period {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .narrative-text {
+            color: #333;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            font-size: 15px;
+        }
+
+        .insight {
+            background: #e8f4fd;
+            border-left: 4px solid #005eb8;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #003d7a;
+        }
+
+        @media (max-width: 1024px) {
+            .container {
                 grid-template-columns: 1fr;
             }
         }
     </style>
 </head>
 <body>
-    <h1>Traffic Overview</h1>
-    <div class="charts-container">
-        <div class="chart-box" id="uniqueVisitors"></div>
-        <div class="chart-box" id="loggedInUsers"></div>
-        <div class="chart-box" id="totalVisits"></div>
-        <div class="chart-box" id="totalLoggedInVisits"></div>
+    <div class="header">
+        <svg class="logo" viewBox="0 0 200 60" xmlns="http://www.w3.org/2000/svg">
+            <text x="10" y="45" font-size="40" font-weight="bold" fill="white">betfair</text>
+        </svg>
+        <h1>Product Overview</h1>
+        <p class="subtitle">Traffic & Engagement Metrics</p>
+    </div>
+
+    <div class="container">
+        <!-- Left Column: Chart -->
+        <div class="section">
+            <div class="controls">
+                <label for="metricSelect">Select Metric:</label>
+                <select id="metricSelect">
+                    <option value="unique_visitors">Unique Visitors</option>
+                    <option value="logged_in_users">Logged-In Users</option>
+                    <option value="total_visits">Total Visits</option>
+                    <option value="total_logged_in_visits">Total Logged-In Visits</option>
+                </select>
+            </div>
+            <div id="chart"></div>
+        </div>
+
+        <!-- Right Column: Narrative -->
+        <div class="section narrative-section">
+            <h2>7-Day Summary</h2>
+            
+            <div class="metric-card">
+                <div class="metric-label">Average - Last 7 Days</div>
+                <div class="metric-value" id="avgValue">—</div>
+                <div class="metric-period" id="metricTitle">Loading...</div>
+            </div>
+
+            <div class="narrative-text">
+                <p id="narrativeText">
+                    This overview provides key insights into Betfair product performance, tracking traffic patterns and user engagement across our platform. Monitor trends in visitor activity, logged-in user behavior, and overall platform utilization to understand product health and identify growth opportunities.
+                </p>
+            </div>
+
+            <div class="insight" id="insight">
+                <strong>📊 Insight:</strong> <span id="insightText">Select a metric to view detailed analysis</span>
+            </div>
+        </div>
     </div>
 
     <script>
         const csvUrl = "https://raw.githubusercontent.com/palfsbg/mp-testing/main/traffic_overview.csv";
+        
+        const colors = {
+            unique_visitors: '#1f77b4',
+            logged_in_users: '#ff7f0e',
+            total_visits: '#2ca02c',
+            total_logged_in_visits: '#d62728'
+        };
+
+        const titles = {
+            unique_visitors: 'Unique Visitors',
+            logged_in_users: 'Logged-In Users',
+            total_visits: 'Total Visits',
+            total_logged_in_visits: 'Total Logged-In Visits'
+        };
+
+        const narratives = {
+            unique_visitors: 'Unique Visitors represents the number of distinct individuals accessing the Betfair platform. This metric helps identify overall reach and market penetration.',
+            logged_in_users: 'Logged-In Users indicates active, authenticated users engaging with the platform. This is a key indicator of user commitment and platform stickiness.',
+            total_visits: 'Total Visits counts all sessions, including repeat visits from the same users. This metric reflects overall platform traffic intensity.',
+            total_logged_in_visits: 'Logged-In Visits measures authenticated sessions, showing how engaged registered users are with the platform content and features.'
+        };
+
+        let allData; // Store the CSV data globally
 
         Plotly.d3.csv(csvUrl, function(data) {
-            const dates = data.map(row => row["event_date"]);
-            const uniqueVisitors = data.map(row => +row["unique_visitors"]);
-            const loggedInUsers = data.map(row => +row["logged_in_users"]);
-            const totalVisits = data.map(row => +row["total_visits"]);
-            const totalLoggedInVisits = data.map(row => +row["total_logged_in_visits"]);
+            allData = data;
+            
+            // Load initial chart
+            updateChart('unique_visitors');
 
-            // Chart 1: Unique Visitors
-            Plotly.newPlot('uniqueVisitors', 
-                [{
-                    x: dates,
-                    y: uniqueVisitors,
-                    type: 'scatter',
-                    mode: 'lines+markers',
-                    line: { color: '#1f77b4' }
-                }], 
-                { title: 'Unique Visitors', height: 400 }, 
-                { responsive: true }
-            );
-
-            // Chart 2: Logged-In Users
-            Plotly.newPlot('loggedInUsers', 
-                [{
-                    x: dates,
-                    y: loggedInUsers,
-                    type: 'scatter',
-                    mode: 'lines+markers',
-                    line: { color: '#ff7f0e' }
-                }], 
-                { title: 'Logged-In Users', height: 400 }, 
-                { responsive: true }
-            );
-
-            // Chart 3: Total Visits
-            Plotly.newPlot('totalVisits', 
-                [{
-                    x: dates,
-                    y: totalVisits,
-                    type: 'scatter',
-                    mode: 'lines+markers',
-                    line: { color: '#2ca02c' }
-                }], 
-                { title: 'Total Visits', height: 400 }, 
-                { responsive: true }
-            );
-
-            // Chart 4: Total Logged-In Visits
-            Plotly.newPlot('totalLoggedInVisits', 
-                [{
-                    x: dates,
-                    y: totalLoggedInVisits,
-                    type: 'scatter',
-                    mode: 'lines+markers',
-                    line: { color: '#d62728' }
-                }], 
-                { title: 'Total Logged-In Visits', height: 400 }, 
-                { responsive: true }
-            );
+            // Add change event listener
+            document.getElementById('metricSelect').addEventListener('change', function(e) {
+                updateChart(e.target.value);
+            });
         });
+
+        function updateChart(metric) {
+            const dates = allData.map(row => row["event_date"]);
+            const values = allData.map(row => +row[metric]);
+
+            const trace = {
+                x: dates,
+                y: values,
+                type: 'scatter',
+                mode: 'lines+markers',
+                line: { color: colors[metric], width: 3 },
+                marker: { size: 6 }
+            };
+
+            const layout = {
+                title: titles[metric],
+                height: 450,
+                xaxis: { title: 'Date' },
+                yaxis: { title: 'Count' },
+                plot_bgcolor: '#f8f9fa',
+                paper_bgcolor: 'white',
+                margin: { t: 40, r: 20, b: 40, l: 60 }
+            };
+
+            Plotly.newPlot('chart', [trace], layout, { responsive: true });
+
+            // Update narrative section
+            updateNarrative(metric, values);
+        }
+
+        function updateNarrative(metric, values) {
+            // Calculate last 7 days average
+            const last7Days = values.slice(-7);
+            const average = (last7Days.reduce((a, b) => a + b, 0) / last7Days.length).toFixed(0);
+            const formatted = parseInt(average).toLocaleString();
+
+            // Update metric card
+            document.getElementById('avgValue').textContent = formatted;
+            document.getElementById('metricTitle').textContent = `${titles[metric]} - 7 Day Average`;
+
+            // Update narrative text
+            document.getElementById('narrativeText').textContent = narratives[metric];
+
+            // Update insight
+            const minVal = Math.min(...last7Days);
+            const maxVal = Math.max(...last7Days);
+            const variance = (((maxVal - minVal) / minVal) * 100).toFixed(1);
+            
+            const insightText = `${titles[metric]} has averaged ${formatted} over the last 7 days, with a variance of ${variance}% between peak and low performance.`;
+            document.getElementById('insightText').textContent = insightText;
+        }
     </script>
 </body>
 </html>
