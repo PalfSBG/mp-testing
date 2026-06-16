@@ -6,270 +6,34 @@
     <title>Product Overview</title>
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
-            background: linear-gradient(135deg, #003d7a 0%, #005eb8 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        .header {
-            text-align: center;
-            color: white;
-            margin-bottom: 30px;
-        }
-
-        .logo {
-            height: 50px;
-            margin-bottom: 15px;
-        }
-
-        h1 {
-            font-size: 32px;
-            font-weight: 700;
-            margin-bottom: 10px;
-        }
-
-        .subtitle {
-            font-size: 16px;
-            opacity: 0.9;
-        }
-
-        .brand-selector {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .brand-selector label {
-            color: white;
-            font-weight: 600;
-            margin-right: 15px;
-            font-size: 16px;
-        }
-
-        .brand-selector select {
-            padding: 12px 16px;
-            font-size: 16px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            background: white;
-            color: #003d7a;
-            font-weight: 600;
-            min-width: 200px;
-        }
-
-        .brand-selector select:focus {
-            outline: 2px solid white;
-        }
-
-        /* Tab Styles */
-        .tabs-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            margin-bottom: 40px;
-        }
-
-        .tab-buttons {
-            display: flex;
-            background: #f0f0f0;
-            border-bottom: 2px solid #e0e0e0;
-            overflow-x: auto;
-        }
-
-        .tab-button {
-            padding: 16px 24px;
-            border: none;
-            background: none;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: 600;
-            color: #666;
-            transition: all 0.3s ease;
-            white-space: nowrap;
-            border-bottom: 3px solid transparent;
-            margin-bottom: -2px;
-        }
-
-        .tab-button:hover {
-            color: #003d7a;
-            background: #f9f9f9;
-        }
-
-        .tab-button.active {
-            color: #003d7a;
-            border-bottom-color: #005eb8;
-            background: white;
-        }
-
-        .tab-content {
-            display: none;
-            padding: 30px;
-            animation: fadeIn 0.3s ease;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        .container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-            align-items: start;
-        }
-
-        .section {
-            background: white;
-            border-radius: 8px;
-            padding: 30px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        }
-
-        .controls {
-            margin-bottom: 25px;
-        }
-
-        .controls label {
-            font-weight: 600;
-            margin-right: 10px;
-            color: #003d7a;
-            display: block;
-            margin-bottom: 8px;
-        }
-
-        .controls select {
-            width: 100%;
-            padding: 12px;
-            font-size: 16px;
-            border: 2px solid #e0e0e0;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: border-color 0.3s;
-        }
-
-        .controls select:hover,
-        .controls select:focus {
-            border-color: #005eb8;
-            outline: none;
-        }
-
-        #chart {
-            height: 450px;
-        }
-
-        .narrative-section h2 {
-            color: #003d7a;
-            font-size: 24px;
-            margin-bottom: 20px;
-            font-weight: 700;
-        }
-
-        .metric-card {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 6px;
-            margin-bottom: 20px;
-            border-left: 4px solid #005eb8;
-        }
-
-        .metric-label {
-            font-size: 14px;
-            color: #666;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 8px;
-            font-weight: 600;
-        }
-
-        .metric-value {
-            font-size: 32px;
-            font-weight: 700;
-            color: #003d7a;
-            margin-bottom: 5px;
-        }
-
-        .metric-period {
-            font-size: 12px;
-            color: #999;
-        }
-
-        .narrative-text {
-            color: #333;
-            line-height: 1.6;
-            margin-bottom: 20px;
-            font-size: 15px;
-        }
-
-        .insight {
-            background: #e8f4fd;
-            border-left: 4px solid #005eb8;
-            padding: 15px;
-            border-radius: 4px;
-            margin-top: 20px;
-            font-size: 14px;
-            color: #003d7a;
-        }
-
-        .comparison-section {
-            max-width: 1400px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 8px;
-            padding: 30px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            margin-bottom: 40px;
-        }
-
-        .comparison-section h2 {
-            color: #003d7a;
-            font-size: 24px;
-            margin-bottom: 25px;
-            font-weight: 700;
-        }
-
-        #comparisonChart {
-            height: 450px;
-        }
-
-        .placeholder-content {
-            background: #f8f9fa;
-            padding: 40px 20px;
-            text-align: center;
-            color: #999;
-            border-radius: 4px;
-            min-height: 300px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        @media (max-width: 1024px) {
-            .container {
-                grid-template-columns: 1fr;
-            }
-
-            .tab-button {
-                padding: 12px 16px;
-                font-size: 14px;
-            }
-        }
-    </style>
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap");
+:root{--navy:#0F1F4A;--cyan:#15B5DB;--pink:#EE3A7C;--ink:#1A2238;--ink-2:#4A5170;--ink-3:#7B829B;--line:#E5E7ED;--line-2:#CBD0DC;--bg:#FFFFFF;--bg-2:#F7F8FB;--bg-3:#EEF0F5;--font-display:'Poppins',sans-serif;--font-body:'Inter',sans-serif;}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-body);background:#fff;color:var(--ink);padding:0;line-height:1.5}
+.header{background:#fff;border-bottom:1px solid var(--line);padding:18px 32px;position:sticky;top:0;z-index:10;text-align:left}
+.logo{display:none}.header:before{content:'Flutter UKI Product Overview';font-family:var(--font-display);font-size:28px;font-weight:700;color:var(--navy)}
+.brand-selector{max-width:1440px;margin:24px auto;padding:0 32px}
+.brand-selector label,.controls label{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-3);font-weight:600;display:block;margin-bottom:6px}
+select{font-family:var(--font-body);font-size:13px;padding:8px 32px 8px 10px;border:1px solid var(--line-2);border-radius:4px;background:#fff;color:var(--ink);font-weight:500}
+.tabs-container,.comparison-section,.section{background:#fff;border:1px solid var(--line);border-radius:6px;box-shadow:none}
+.tabs-container{max-width:1440px;margin:0 auto 24px}
+.tab-buttons{background:var(--bg-2);border-bottom:1px solid var(--line)}
+.tab-button{font-family:var(--font-body);font-size:13px;color:var(--ink-2);padding:14px 18px;border-bottom:2px solid transparent}
+.tab-button.active{background:#fff;color:var(--navy);border-bottom-color:var(--pink)}
+.tab-content{padding:24px}
+.container{display:grid;grid-template-columns:1.2fr .8fr;gap:24px}
+.section{padding:24px}
+.narrative-section h2,.comparison-section h2{font-family:var(--font-display);color:var(--navy);font-size:24px}
+.metric-card{background:var(--bg-2);border:1px solid var(--line);border-left:4px solid var(--cyan);padding:18px;border-radius:6px}
+.metric-label{font-size:11px;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.metric-value{font-family:var(--font-display);font-size:32px;color:var(--navy)}
+.metric-period{font-size:12px;color:var(--ink-3)}
+.narrative-text{color:var(--ink-2)}
+.insight{background:#F5FCFE;border-left:4px solid var(--cyan);color:var(--navy)}
+.comparison-section{max-width:1440px;margin:24px auto;padding:24px}
+.placeholder-content{background:var(--bg-2);border:1px dashed var(--line-2);color:var(--ink-3)}
+@media(max-width:1024px){.container{grid-template-columns:1fr}.header{padding:16px}}
+</style>
 </head>
 <body>
     <div class="header">
