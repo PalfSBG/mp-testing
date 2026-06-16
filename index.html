@@ -276,7 +276,6 @@
         <svg class="logo" viewBox="0 0 200 60" xmlns="http://www.w3.org/2000/svg">
             <text x="10" y="45" font-size="40" font-weight="bold" fill="white">Flutter UKI Product Overview</text>
         </svg>
-        <p class="subtitle">Traffic & Engagement Metrics</p>
     </div>
 
     <div class="brand-selector">
@@ -323,11 +322,17 @@
                         <div class="metric-value" id="avgValue">—</div>
                         <div class="metric-period" id="metricTitle">Loading...</div>
                     </div>
-
+                
+                    <div class="metric-card">
+                        <div class="metric-label">Conversion To Login - Last 7 Days</div>
+                        <div class="metric-value" id="conversionValue">—</div>
+                        <div class="metric-period">Average Conversion Rate</div>
+                    </div>
+                
                     <div class="narrative-text" id="narrativeText">
                         This overview provides key insights into product performance, tracking traffic patterns and user engagement across our platform.
                     </div>
-
+                
                     <div class="insight" id="insight">
                         <strong>📊 Insight:</strong> <span id="insightText">Select a metric to view detailed analysis</span>
                     </div>
@@ -394,8 +399,8 @@
         };
 
         const narratives = {
-            unique_visitors: 'Unique Visitors represents the number of distinct individuals accessing the platform. This metric helps identify overall reach and market penetration.',
-            logged_in_users: 'Logged-In Users indicates active, authenticated users engaging with the platform. This is a key indicator of user commitment and platform stickiness.',
+            unique_visitors: 'Unique Visitors represents the number of distinct individuals accessing the platform. It shows the number of people exploring our site/app.',
+            logged_in_users: 'Logged-In Users indicates the number of logged-in individuals accessing the platform. This is a key indicator of user commitment.',
             total_visits: 'Total Visits counts all sessions, including repeat visits from the same users. This metric reflects overall platform traffic intensity.',
             total_logged_in_visits: 'Logged-In Visits measures authenticated sessions, showing how engaged registered users are with the platform content and features.'
         };
@@ -513,20 +518,33 @@
         }
 
         function updateNarrative(brand, metric, values) {
+            const data = allBrandData[brand];
             const last7Days = values.slice(-7);
             const average = (last7Days.reduce((a, b) => a + b, 0) / last7Days.length).toFixed(0);
             const formatted = parseInt(average).toLocaleString();
-
+        
             document.getElementById('brandTitle').textContent = brands[brand].name;
             document.getElementById('avgValue').textContent = formatted;
             document.getElementById('metricTitle').textContent = `${titles[metric]} - 7 Day Average`;
             document.getElementById('narrativeText').textContent = narratives[metric];
-
+        
+            // Calculate Conversion To Login (logged-in users / unique visitors)
+            const uniqueVisitors7d = data.slice(-7).map(row => +row["unique_visitors"]);
+            const loggedInUsers7d = data.slice(-7).map(row => +row["logged_in_users"]);
+            
+            const conversionRates = uniqueVisitors7d.map((uv, i) => {
+                return uv > 0 ? (loggedInUsers7d[i] / uv) : 0;
+            });
+            
+            const avgConversionRate = (conversionRates.reduce((a, b) => a + b, 0) / conversionRates.length * 100).toFixed(2);
+            document.getElementById('conversionValue').textContent = `${avgConversionRate}%`;
+        
+            // Update insight with both metrics
             const minVal = Math.min(...last7Days);
             const maxVal = Math.max(...last7Days);
             const variance = (((maxVal - minVal) / minVal) * 100).toFixed(1);
-
-            const insightText = `${titles[metric]} has averaged ${formatted} over the last 7 days, with a variance of ${variance}% between peak and low performance.`;
+        
+            const insightText = `${titles[metric]} has averaged ${formatted} over the last 7 days with a ${variance}% variance. Conversion to login rate averaged ${avgConversionRate}% during this period.`;
             document.getElementById('insightText').textContent = insightText;
         }
 
