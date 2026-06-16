@@ -5,28 +5,108 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Traffic Overview</title>
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .charts-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .chart-box {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            height: 450px;
+            min-height: 450px;
+        }
+        @media (max-width: 768px) {
+            .charts-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 <body>
     <h1>Traffic Overview</h1>
-    <div id="debug" style="background: #f0f0f0; padding: 20px; margin: 20px; font-family: monospace;"></div>
-    <div id="uniqueVisitors"></div>
+    <div class="charts-container">
+        <div class="chart-box" id="uniqueVisitors"></div>
+        <div class="chart-box" id="loggedInUsers"></div>
+        <div class="chart-box" id="totalVisits"></div>
+        <div class="chart-box" id="totalLoggedInVisits"></div>
+    </div>
 
     <script>
         const csvUrl = "https://raw.githubusercontent.com/palfsbg/mp-testing/main/traffic_overview.csv";
 
         Plotly.d3.csv(csvUrl, function(data) {
-            // Debug: Show what we received
-            document.getElementById('debug').innerHTML = `
-                <strong>CSV loaded successfully!</strong><br>
-                Rows found: ${data.length}<br>
-                First row: ${JSON.stringify(data[0])}<br>
-                Column names: ${Object.keys(data[0]).join(', ')}
-            `;
+            const xAxis = data.map((_, i) => i + 1);
+            const uniqueVisitors = data.map(row => +row["unique_visitors"]);
+            const loggedInUsers = data.map(row => +row["logged_in_users"]);
+            const totalVisits = data.map(row => +row["total_visits"]);
+            const totalLoggedInVisits = data.map(row => +row["total_logged_in_visits"]);
 
-            if (data.length === 0) {
-                document.getElementById('debug').innerHTML += '<br><strong style="color:red;">ERROR: No data rows!</strong>';
-                return;
-            }
+            // Chart 1: Unique Visitors
+            Plotly.newPlot('uniqueVisitors', 
+                [{
+                    x: xAxis,
+                    y: uniqueVisitors,
+                    type: 'scatter',
+                    mode: 'lines+markers',
+                    line: { color: '#1f77b4' }
+                }], 
+                { title: 'Unique Visitors', height: 400 }, 
+                { responsive: true }
+            );
+
+            // Chart 2: Logged-In Users
+            Plotly.newPlot('loggedInUsers', 
+                [{
+                    x: xAxis,
+                    y: loggedInUsers,
+                    type: 'scatter',
+                    mode: 'lines+markers',
+                    line: { color: '#ff7f0e' }
+                }], 
+                { title: 'Logged-In Users', height: 400 }, 
+                { responsive: true }
+            );
+
+            // Chart 3: Total Visits
+            Plotly.newPlot('totalVisits', 
+                [{
+                    x: xAxis,
+                    y: totalVisits,
+                    type: 'scatter',
+                    mode: 'lines+markers',
+                    line: { color: '#2ca02c' }
+                }], 
+                { title: 'Total Visits', height: 400 }, 
+                { responsive: true }
+            );
+
+            // Chart 4: Total Logged-In Visits
+            Plotly.newPlot('totalLoggedInVisits', 
+                [{
+                    x: xAxis,
+                    y: totalLoggedInVisits,
+                    type: 'scatter',
+                    mode: 'lines+markers',
+                    line: { color: '#d62728' }
+                }], 
+                { title: 'Total Logged-In Visits', height: 400 }, 
+                { responsive: true }
+            );
         });
     </script>
 </body>
