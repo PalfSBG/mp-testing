@@ -40,24 +40,26 @@
     <div class="charts-container">
         <div class="chart-box" id="uniqueVisitors"></div>
         <div class="chart-box" id="loggedInUsers"></div>
-        <div class="chart-box" id="visits"></div>
-        <div class="chart-box" id="loggedInVisits"></div>
+        <div class="chart-box" id="totalVisits"></div>
+        <div class="chart-box" id="totalLoggedInVisits"></div>
     </div>
 
     <script>
-        const csvUrl = "https://raw.githubusercontent.com/palfsbg/mp-testing/main/traffic_overview.csv";
+        const csvUrl = "https://raw.githubusercontent.com/PalfSBG/mp-testing/main/traffic_overview.csv";
 
         Plotly.d3.csv(csvUrl, function(data) {
-            // Extract columns
-            const dates = data.map(row => row[Object.keys(row)[0]]); // First column assumed to be date/label
-            const uniqueVisitors = data.map(row => +row["Unique Visitors"]);
-            const loggedInUsers = data.map(row => +row["Logged-In Users"]);
-            const visits = data.map(row => +row["Visits"]);
-            const loggedInVisits = data.map(row => +row["Logged-In Visits"]);
+            // Create index array for x-axis (1, 2, 3, etc.)
+            const xAxis = data.map((_, i) => i + 1);
+
+            // Extract y-values from each column
+            const uniqueVisitors = data.map(row => +row["unique_visitors"]);
+            const loggedInUsers = data.map(row => +row["logged_in_users"]);
+            const totalVisits = data.map(row => +row["total_visits"]);
+            const totalLoggedInVisits = data.map(row => +row["total_logged_in_visits"]);
 
             // Chart 1: Unique Visitors
             const trace1 = {
-                x: dates,
+                x: xAxis,
                 y: uniqueVisitors,
                 type: 'scatter',
                 mode: 'lines+markers',
@@ -66,13 +68,13 @@
             };
             Plotly.newPlot('uniqueVisitors', [trace1], {
                 title: 'Unique Visitors',
-                xaxis: { title: 'Date' },
+                xaxis: { title: 'Period' },
                 yaxis: { title: 'Count' }
             }, { responsive: true });
 
             // Chart 2: Logged-In Users
             const trace2 = {
-                x: dates,
+                x: xAxis,
                 y: loggedInUsers,
                 type: 'scatter',
                 mode: 'lines+markers',
@@ -81,37 +83,37 @@
             };
             Plotly.newPlot('loggedInUsers', [trace2], {
                 title: 'Logged-In Users',
-                xaxis: { title: 'Date' },
+                xaxis: { title: 'Period' },
                 yaxis: { title: 'Count' }
             }, { responsive: true });
 
-            // Chart 3: Visits
+            // Chart 3: Total Visits
             const trace3 = {
-                x: dates,
-                y: visits,
+                x: xAxis,
+                y: totalVisits,
                 type: 'scatter',
                 mode: 'lines+markers',
-                name: 'Visits',
+                name: 'Total Visits',
                 line: { color: '#2ca02c' }
             };
-            Plotly.newPlot('visits', [trace3], {
-                title: 'Visits',
-                xaxis: { title: 'Date' },
+            Plotly.newPlot('totalVisits', [trace3], {
+                title: 'Total Visits',
+                xaxis: { title: 'Period' },
                 yaxis: { title: 'Count' }
             }, { responsive: true });
 
-            // Chart 4: Logged-In Visits
+            // Chart 4: Total Logged-In Visits
             const trace4 = {
-                x: dates,
-                y: loggedInVisits,
+                x: xAxis,
+                y: totalLoggedInVisits,
                 type: 'scatter',
                 mode: 'lines+markers',
-                name: 'Logged-In Visits',
+                name: 'Total Logged-In Visits',
                 line: { color: '#d62728' }
             };
-            Plotly.newPlot('loggedInVisits', [trace4], {
-                title: 'Logged-In Visits',
-                xaxis: { title: 'Date' },
+            Plotly.newPlot('totalLoggedInVisits', [trace4], {
+                title: 'Total Logged-In Visits',
+                xaxis: { title: 'Period' },
                 yaxis: { title: 'Count' }
             }, { responsive: true });
         });
