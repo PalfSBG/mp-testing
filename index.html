@@ -336,7 +336,7 @@ function loadBrandData(brand) {
             } else {
                 reject(`Failed to load ${brand} data`);
             }
-        }).catch(reject);
+        });
     });
 }
 
