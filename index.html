@@ -69,14 +69,69 @@
             outline: 2px solid white;
         }
 
-        .container {
+        /* Tab Styles */
+        .tabs-container {
             max-width: 1400px;
             margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            margin-bottom: 40px;
+        }
+
+        .tab-buttons {
+            display: flex;
+            background: #f0f0f0;
+            border-bottom: 2px solid #e0e0e0;
+            overflow-x: auto;
+        }
+
+        .tab-button {
+            padding: 16px 24px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            color: #666;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            border-bottom: 3px solid transparent;
+            margin-bottom: -2px;
+        }
+
+        .tab-button:hover {
+            color: #003d7a;
+            background: #f9f9f9;
+        }
+
+        .tab-button.active {
+            color: #003d7a;
+            border-bottom-color: #005eb8;
+            background: white;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 30px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .container {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 30px;
             align-items: start;
-            margin-bottom: 40px;
         }
 
         .section {
@@ -178,6 +233,7 @@
             border-radius: 8px;
             padding: 30px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            margin-bottom: 40px;
         }
 
         .comparison-section h2 {
@@ -191,15 +247,26 @@
             height: 450px;
         }
 
-        .loading {
+        .placeholder-content {
+            background: #f8f9fa;
+            padding: 40px 20px;
             text-align: center;
             color: #999;
-            padding: 20px;
+            border-radius: 4px;
+            min-height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         @media (max-width: 1024px) {
             .container {
                 grid-template-columns: 1fr;
+            }
+
+            .tab-button {
+                padding: 12px 16px;
+                font-size: 14px;
             }
         }
     </style>
@@ -207,9 +274,8 @@
 <body>
     <div class="header">
         <svg class="logo" viewBox="0 0 200 60" xmlns="http://www.w3.org/2000/svg">
-            <text x="10" y="45" font-size="40" font-weight="bold" fill="white">Flutter UKI</text>
+            <text x="10" y="45" font-size="40" font-weight="bold" fill="white">Flutter UKI Product Overview</text>
         </svg>
-        <h1>Product Overview</h1>
         <p class="subtitle">Traffic & Engagement Metrics</p>
     </div>
 
@@ -222,45 +288,88 @@
         </select>
     </div>
 
-    <div class="container">
-        <!-- Left Column: Chart -->
-        <div class="section">
-            <div class="controls">
-                <label for="metricSelect">Select Metric:</label>
-                <select id="metricSelect">
-                    <option value="unique_visitors">Unique Visitors</option>
-                    <option value="logged_in_users">Logged-In Users</option>
-                    <option value="total_visits">Total Visits</option>
-                    <option value="total_logged_in_visits">Total Logged-In Visits</option>
-                </select>
-            </div>
-            <div id="chart"></div>
+    <!-- Tabs Container -->
+    <div class="tabs-container">
+        <div class="tab-buttons">
+            <button class="tab-button active" data-tab="traffic">Traffic & Engagement</button>
+            <button class="tab-button" data-tab="conversion">Conversion</button>
+            <button class="tab-button" data-tab="popular-pages">Popular Pages</button>
+            <button class="tab-button" data-tab="customer">Customer</button>
         </div>
 
-        <!-- Right Column: Narrative -->
-        <div class="section narrative-section">
-            <h2 id="brandTitle">Betfair</h2>
-            
-            <div class="metric-card">
-                <div class="metric-label">Average - Last 7 Days</div>
-                <div class="metric-value" id="avgValue">—</div>
-                <div class="metric-period" id="metricTitle">Loading...</div>
+        <!-- Traffic & Engagement Tab -->
+        <div id="traffic" class="tab-content active">
+            <div class="container">
+                <!-- Left Column: Chart -->
+                <div class="section">
+                    <div class="controls">
+                        <label for="metricSelect">Select Metric:</label>
+                        <select id="metricSelect">
+                            <option value="unique_visitors">Unique Visitors</option>
+                            <option value="logged_in_users">Logged-In Users</option>
+                            <option value="total_visits">Total Visits</option>
+                            <option value="total_logged_in_visits">Total Logged-In Visits</option>
+                        </select>
+                    </div>
+                    <div id="chart"></div>
+                </div>
+
+                <!-- Right Column: Narrative -->
+                <div class="section narrative-section">
+                    <h2 id="brandTitle">Betfair</h2>
+                    
+                    <div class="metric-card">
+                        <div class="metric-label">Average - Last 7 Days</div>
+                        <div class="metric-value" id="avgValue">—</div>
+                        <div class="metric-period" id="metricTitle">Loading...</div>
+                    </div>
+
+                    <div class="narrative-text" id="narrativeText">
+                        This overview provides key insights into product performance, tracking traffic patterns and user engagement across our platform.
+                    </div>
+
+                    <div class="insight" id="insight">
+                        <strong>📊 Insight:</strong> <span id="insightText">Select a metric to view detailed analysis</span>
+                    </div>
+                </div>
             </div>
 
-            <div class="narrative-text" id="narrativeText">
-                This overview provides key insights into product performance, tracking traffic patterns and user engagement across our platform.
-            </div>
-
-            <div class="insight" id="insight">
-                <strong>📊 Insight:</strong> <span id="insightText">Select a metric to view detailed analysis</span>
+            <!-- Comparison Chart -->
+            <div class="comparison-section">
+                <h2>Brand Comparison - All Metrics</h2>
+                <div id="comparisonChart"></div>
             </div>
         </div>
-    </div>
 
-    <!-- Comparison Section -->
-    <div class="comparison-section">
-        <h2>Brand Comparison - All Metrics</h2>
-        <div id="comparisonChart"></div>
+        <!-- Conversion Tab -->
+        <div id="conversion" class="tab-content">
+            <div class="placeholder-content">
+                <div>
+                    <h3 style="color: #003d7a; margin-bottom: 10px;">Conversion Data</h3>
+                    <p>Conversion metrics and analysis will be displayed here</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Popular Pages Tab -->
+        <div id="popular-pages" class="tab-content">
+            <div class="placeholder-content">
+                <div>
+                    <h3 style="color: #003d7a; margin-bottom: 10px;">Popular Pages</h3>
+                    <p>Top performing pages and content analysis will be displayed here</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Customer Tab -->
+        <div id="customer" class="tab-content">
+            <div class="placeholder-content">
+                <div>
+                    <h3 style="color: #003d7a; margin-bottom: 10px;">Customer Insights</h3>
+                    <p>Customer behavior and demographic data will be displayed here</p>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -293,6 +402,37 @@
 
         let allBrandData = {}; // Store all brand data
 
+        // Tab switching
+        document.querySelectorAll('.tab-button').forEach(button => {
+            button.addEventListener('click', function() {
+                const tabName = this.getAttribute('data-tab');
+
+                // Hide all tabs
+                document.querySelectorAll('.tab-content').forEach(tab => {
+                    tab.classList.remove('active');
+                });
+
+                // Remove active class from all buttons
+                document.querySelectorAll('.tab-button').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+
+                // Show selected tab
+                document.getElementById(tabName).classList.add('active');
+                this.classList.add('active');
+
+                // Redraw charts when Traffic tab is clicked
+                if (tabName === 'traffic') {
+                    setTimeout(() => {
+                        const brand = document.getElementById('brandSelect').value;
+                        const metric = document.getElementById('metricSelect').value;
+                        updateChart(brand, metric);
+                        updateComparisonChart(metric);
+                    }, 100);
+                }
+            });
+        });
+
         // Load all brand data on page load
         Promise.all([
             loadBrandData('betfair'),
@@ -317,28 +457,28 @@
             });
         });
 
-function loadBrandData(brand) {
-    let filename;
-    if (brand === 'betfair') {
-        filename = 'bf_traffic_overview.csv';
-    } else if (brand === 'paddypower') {
-        filename = 'pp_traffic_overview.csv';
-    } else if (brand === 'skybet') {
-        filename = 'sbg_traffic_overview.csv';
-    }
-    const csvUrl = `https://raw.githubusercontent.com/palfsbg/mp-testing/main/${filename}`;
-
-    return new Promise((resolve, reject) => {
-        Plotly.d3.csv(csvUrl, function(data) {
-            if (data && data.length > 0) {
-                allBrandData[brand] = data;
-                resolve();
-            } else {
-                reject(`Failed to load ${brand} data`);
+        function loadBrandData(brand) {
+            let filename;
+            if (brand === 'betfair') {
+                filename = 'bf_traffic_overview.csv';
+            } else if (brand === 'paddypower') {
+                filename = 'pp_traffic_overview.csv';
+            } else if (brand === 'skybet') {
+                filename = 'sbg_traffic_overview.csv';
             }
-        });
-    });
-}
+            const csvUrl = `https://raw.githubusercontent.com/palfsbg/mp-testing/main/${filename}`;
+
+            return new Promise((resolve, reject) => {
+                Plotly.d3.csv(csvUrl, function(data) {
+                    if (data && data.length > 0) {
+                        allBrandData[brand] = data;
+                        resolve();
+                    } else {
+                        reject(`Failed to load ${brand} data`);
+                    }
+                });
+            });
+        }
 
         function updateChart(brand, metric) {
             const data = allBrandData[brand];
