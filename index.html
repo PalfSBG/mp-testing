@@ -1,16 +1,12 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Footdle — Guess the Football Ground</title>
-
-  <!-- Leaflet CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     :root {
       --green:   #16a34a;
       --green-h: #15803d;
@@ -23,12 +19,8 @@
       --muted:   #94a3b8;
       --radius:  10px;
     }
-
     html, body { height: 100%; font-family: system-ui, sans-serif; background: var(--bg); color: var(--text); }
-
-    /* ── Layout ── */
     .app { display: flex; flex-direction: column; height: 100vh; }
-
     header {
       background: var(--surface);
       border-bottom: 1px solid var(--border);
@@ -40,27 +32,16 @@
       gap: 1rem;
       flex-wrap: wrap;
     }
-
     .logo { font-size: 1.4rem; font-weight: 800; letter-spacing: -.02em; }
     .logo span { color: var(--green); }
-
-    .club-panel {
-      text-align: center;
-      flex: 1;
-      min-width: 160px;
-    }
+    .club-panel { text-align: center; flex: 1; min-width: 160px; }
     .round-label { font-size: .7rem; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; }
     .club-name   { font-size: 1.15rem; font-weight: 700; margin-top: .2rem; }
     .club-league { font-size: .75rem; color: var(--muted); margin-top: .1rem; }
-
     .score-panel { text-align: right; min-width: 80px; }
     .score-label  { font-size: .7rem; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; }
     .score-value  { font-size: 1.4rem; font-weight: 800; color: var(--green); }
-
-    /* ── Map ── */
     #map { flex: 1; cursor: crosshair; }
-
-    /* ── Bottom bar ── */
     .bottom-bar {
       background: var(--surface);
       border-top: 1px solid var(--border);
@@ -72,10 +53,8 @@
       flex-shrink: 0;
       flex-wrap: wrap;
     }
-
     .hint { font-size: .82rem; color: var(--muted); }
     .hint strong { color: var(--text); }
-
     .btn {
       padding: .55rem 1.4rem;
       border-radius: var(--radius);
@@ -90,8 +69,6 @@
     .btn-green:hover:not(:disabled)  { background: var(--green-h); }
     .btn-outline { background: transparent; color: var(--text); border: 1.5px solid var(--border); }
     .btn-outline:hover:not(:disabled) { border-color: var(--text); }
-
-    /* ── Result overlay ── */
     .overlay {
       position: fixed; inset: 0;
       background: rgba(0,0,0,.65);
@@ -100,7 +77,6 @@
       padding: 1rem;
     }
     .overlay.hidden { display: none; }
-
     .card {
       background: var(--surface);
       border: 1px solid var(--border);
@@ -110,7 +86,6 @@
       width: 100%;
       text-align: center;
     }
-
     .result-emoji { font-size: 3rem; margin-bottom: .5rem; }
     .result-pts   { font-size: 2.5rem; font-weight: 900; }
     .result-pts.great  { color: var(--green); }
@@ -118,48 +93,43 @@
     .result-pts.bad    { color: var(--red);   }
     .result-dist  { font-size: 1rem; color: var(--muted); margin: .35rem 0 1rem; }
     .result-loc   { font-size: .82rem; color: var(--muted); margin-bottom: 1.5rem; }
-
     .btn-row { display: flex; gap: .75rem; justify-content: center; flex-wrap: wrap; }
-
-    /* ── End-of-game card ── */
     .final-score { font-size: 3.5rem; font-weight: 900; color: var(--green); margin: .5rem 0; }
     .final-sub   { color: var(--muted); font-size: .9rem; margin-bottom: 1.5rem; }
-
-    /* ── Progress dots ── */
     .dots { display: flex; gap: .4rem; }
-    .dot {
-      width: 10px; height: 10px; border-radius: 50%;
-      background: var(--border);
-      transition: background .3s;
-    }
+    .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--border); transition: background .3s; }
     .dot.done  { background: var(--green); }
     .dot.current { background: var(--amber); }
-
-    /* ── Leaflet tweaks ── */
     .leaflet-container { background: #1e3a5f; }
-
-    /* Distance line colour */
     .result-line { stroke: #f59e0b; stroke-width: 2; stroke-dasharray: 6 4; }
-
     @media (max-width: 500px) {
       .club-name { font-size: 1rem; }
       .score-value { font-size: 1.1rem; }
     }
+    #loading { position:fixed; inset:0; background:var(--bg); display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:9999; gap:.75rem; }
+    #loading.hidden { display:none; }
+    #loading h2 { color:var(--text); font-size:1.4rem; letter-spacing:.05em; }
+    #loading p { color:var(--muted); font-size:.9rem; }
+    .progress-track { width:260px; height:8px; background:var(--border); border-radius:4px; overflow:hidden; }
+    .progress-bar { height:100%; width:0%; background:var(--green); border-radius:4px; transition:width .4s ease; }
+    #loadPct { color:var(--green); font-size:.85rem; font-weight:600; }
   </style>
 </head>
 <body>
-
+<div id="loading">
+  <h2>⚽ Footdle</h2>
+  <div class="progress-track"><div class="progress-bar" id="progressBar"></div></div>
+  <span id="loadPct">0%</span>
+  <p>Loading stadiums…</p>
+</div>
 <div class="app">
-
   <header>
     <div class="logo">Foot<span>dle</span></div>
-
     <div class="club-panel">
       <div class="round-label">Round <span id="roundNum">1</span> of <span id="totalRounds">5</span></div>
       <div class="club-name" id="clubName">Loading…</div>
       <div class="club-league" id="clubLeague"></div>
     </div>
-
     <div style="display:flex;align-items:center;gap:1rem;">
       <div class="dots" id="dots"></div>
       <div class="score-panel">
@@ -168,9 +138,7 @@
       </div>
     </div>
   </header>
-
   <div id="map"></div>
-
   <div class="bottom-bar">
     <div class="hint" id="hint">Click anywhere on the map to drop your pin</div>
     <div style="display:flex;gap:.75rem;">
@@ -178,10 +146,7 @@
       <button class="btn btn-green"   id="submitBtn" disabled onclick="submitGuess()">Submit guess</button>
     </div>
   </div>
-
 </div>
-
-<!-- Round result overlay -->
 <div class="overlay hidden" id="resultOverlay">
   <div class="card">
     <div class="result-emoji" id="resultEmoji"></div>
@@ -194,8 +159,6 @@
     </div>
   </div>
 </div>
-
-<!-- End of game overlay -->
 <div class="overlay hidden" id="endOverlay">
   <div class="card">
     <div style="font-size:1.2rem;font-weight:700;margin-bottom:.5rem;">Game Over!</div>
@@ -206,93 +169,19 @@
     </div>
   </div>
 </div>
-
-<!-- Leaflet JS -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
 <script>
-// ── Club database ────────────────────────────────────────────────────────────
-const ALL_CLUBS = [
-  // England – Premier League
-  { name: "Arsenal",              league: "Premier League",    lat: 51.5549, lng: -0.1084, ground: "Emirates Stadium, London" },
-  { name: "Chelsea",              league: "Premier League",    lat: 51.4816, lng: -0.1909, ground: "Stamford Bridge, London" },
-  { name: "Liverpool",            league: "Premier League",    lat: 53.4308, lng: -2.9608, ground: "Anfield, Liverpool" },
-  { name: "Manchester City",      league: "Premier League",    lat: 53.4831, lng: -2.2004, ground: "Etihad Stadium, Manchester" },
-  { name: "Manchester United",    league: "Premier League",    lat: 53.4631, lng: -2.2913, ground: "Old Trafford, Manchester" },
-  { name: "Tottenham Hotspur",    league: "Premier League",    lat: 51.6043, lng: -0.0665, ground: "Tottenham Hotspur Stadium, London" },
-  { name: "Newcastle United",     league: "Premier League",    lat: 54.9756, lng: -1.6217, ground: "St. James' Park, Newcastle" },
-  { name: "Aston Villa",          league: "Premier League",    lat: 52.5092, lng: -1.8847, ground: "Villa Park, Birmingham" },
-  { name: "Everton",              league: "Premier League",    lat: 53.4388, lng: -2.9662, ground: "Goodison Park, Liverpool" },
-  { name: "West Ham United",      league: "Premier League",    lat: 51.5387, lng: -0.0169, ground: "London Stadium" },
-  // Spain – La Liga
-  { name: "Real Madrid",          league: "La Liga",           lat: 40.4531, lng: -3.6883, ground: "Estadio Santiago Bernabéu, Madrid" },
-  { name: "FC Barcelona",         league: "La Liga",           lat: 41.3809, lng:  2.1228, ground: "Spotify Camp Nou, Barcelona" },
-  { name: "Atlético de Madrid",   league: "La Liga",           lat: 40.4361, lng: -3.5995, ground: "Cívitas Metropolitano, Madrid" },
-  { name: "Sevilla FC",           league: "La Liga",           lat: 37.3840, lng: -5.9706, ground: "Estadio Ramón Sánchez-Pizjuán, Sevilla" },
-  { name: "Real Betis",           league: "La Liga",           lat: 37.3563, lng: -5.9819, ground: "Estadio Benito Villamarín, Sevilla" },
-  // Germany – Bundesliga
-  { name: "Bayern Munich",        league: "Bundesliga",        lat: 48.2188, lng: 11.6248, ground: "Allianz Arena, Munich" },
-  { name: "Borussia Dortmund",    league: "Bundesliga",        lat: 51.4926, lng:  7.4518, ground: "Signal Iduna Park, Dortmund" },
-  { name: "Bayer Leverkusen",     league: "Bundesliga",        lat: 51.0385, lng:  6.9902, ground: "BayArena, Leverkusen" },
-  { name: "RB Leipzig",           league: "Bundesliga",        lat: 51.3458, lng: 12.3483, ground: "Red Bull Arena, Leipzig" },
-  { name: "Eintracht Frankfurt",  league: "Bundesliga",        lat: 50.0686, lng:  8.6456, ground: "Deutsche Bank Park, Frankfurt" },
-  // Italy – Serie A
-  { name: "Juventus",             league: "Serie A",           lat: 45.1096, lng:  7.6413, ground: "Juventus Stadium, Turin" },
-  { name: "AC Milan",             league: "Serie A",           lat: 45.4781, lng:  9.1240, ground: "San Siro, Milan" },
-  { name: "Inter Milan",          league: "Serie A",           lat: 45.4781, lng:  9.1240, ground: "San Siro, Milan" },
-  { name: "AS Roma",              league: "Serie A",           lat: 41.9334, lng: 12.4546, ground: "Stadio Olimpico, Rome" },
-  { name: "SSC Napoli",           league: "Serie A",           lat: 40.8279, lng: 14.1931, ground: "Stadio Diego Armando Maradona, Naples" },
-  // France – Ligue 1
-  { name: "Paris Saint-Germain",  league: "Ligue 1",           lat: 48.8414, lng:  2.2530, ground: "Parc des Princes, Paris" },
-  { name: "Olympique de Marseille", league: "Ligue 1",         lat: 43.2697, lng:  5.3956, ground: "Stade Vélodrome, Marseille" },
-  { name: "Olympique Lyonnais",   league: "Ligue 1",           lat: 45.7653, lng:  4.9822, ground: "Groupama Stadium, Lyon" },
-  { name: "AS Monaco",            league: "Ligue 1",           lat: 43.7272, lng:  7.4154, ground: "Stade Louis II, Monaco" },
-  // Portugal
-  { name: "Benfica",              league: "Primeira Liga",     lat: 38.7523, lng: -9.1845, ground: "Estádio da Luz, Lisbon" },
-  { name: "FC Porto",             league: "Primeira Liga",     lat: 41.1619, lng: -8.5835, ground: "Estádio do Dragão, Porto" },
-  { name: "Sporting CP",          league: "Primeira Liga",     lat: 38.7614, lng: -9.1603, ground: "Estádio José Alvalade, Lisbon" },
-  // Netherlands
-  { name: "Ajax",                 league: "Eredivisie",        lat: 52.3143, lng:  4.9416, ground: "Johan Cruyff Arena, Amsterdam" },
-  { name: "PSV Eindhoven",        league: "Eredivisie",        lat: 51.4416, lng:  5.4673, ground: "Philips Stadion, Eindhoven" },
-  { name: "Feyenoord",            league: "Eredivisie",        lat: 51.8939, lng:  4.5238, ground: "De Kuip, Rotterdam" },
-  // Brazil
-  { name: "Flamengo",             league: "Brasileirão",       lat: -22.9121, lng: -43.2302, ground: "Maracanã, Rio de Janeiro" },
-  { name: "São Paulo FC",         league: "Brasileirão",       lat: -23.5454, lng: -46.7331, ground: "MorumBIS, São Paulo" },
-  { name: "Corinthians",          league: "Brasileirão",       lat: -23.5457, lng: -46.4738, ground: "Neo Química Arena, São Paulo" },
-  // Argentina
-  { name: "Boca Juniors",         league: "Liga Profesional",  lat: -34.6345, lng: -58.3654, ground: "La Bombonera, Buenos Aires" },
-  { name: "River Plate",          league: "Liga Profesional",  lat: -34.5455, lng: -58.4498, ground: "El Monumental, Buenos Aires" },
-  // USA
-  { name: "LA Galaxy",            league: "MLS",               lat: 33.8644, lng: -118.2611, ground: "Dignity Health Sports Park, LA" },
-  { name: "Inter Miami CF",       league: "MLS",               lat: 25.8879, lng: -80.1391, ground: "Chase Stadium, Miami" },
-  { name: "Seattle Sounders",     league: "MLS",               lat: 47.5952, lng: -122.3316, ground: "Lumen Field, Seattle" },
-  // Japan
-  { name: "Urawa Red Diamonds",   league: "J1 League",         lat: 35.8927, lng: 139.6218, ground: "Saitama Stadium, Saitama" },
-  { name: "Gamba Osaka",          league: "J1 League",         lat: 34.7957, lng: 135.5355, ground: "Panasonic Stadium Suita, Osaka" },
-  // Australia
-  { name: "Sydney FC",            league: "A-League",          lat: -33.8693, lng: 151.2046, ground: "Allianz Stadium, Sydney" },
-  // South Korea
-  { name: "Jeonbuk Hyundai",      league: "K League 1",        lat: 35.8193, lng: 127.1297, ground: "Jeonju World Cup Stadium" },
-  // Saudi Arabia
-  { name: "Al-Hilal",             league: "Saudi Pro League",  lat: 24.7136, lng: 46.6753, ground: "King Fahd International, Riyadh" },
-  { name: "Al-Nassr",             league: "Saudi Pro League",  lat: 24.7521, lng: 46.6876, ground: "Al-Awwal Park, Riyadh" },
-  // Turkey
-  { name: "Galatasaray",          league: "Süper Lig",         lat: 41.0733, lng: 29.0100, ground: "RAMS Park, Istanbul" },
-  { name: "Fenerbahçe",           league: "Süper Lig",         lat: 40.9917, lng: 29.0355, ground: "Şükrü Saraçoğlu, Istanbul" },
-  // Scotland
-  { name: "Celtic",               league: "Scottish Premiership", lat: 55.8499, lng: -4.2052, ground: "Celtic Park, Glasgow" },
-  { name: "Rangers",              league: "Scottish Premiership", lat: 55.8508, lng: -4.3094, ground: "Ibrox Stadium, Glasgow" },
-];
+let ALL_CLUBS = [];
+
 
 const ROUNDS_PER_GAME = 5;
 const MAX_SCORE_PER_ROUND = 5000;
 const MAX_DIST_KM = 5000;
 
-// ── State ────────────────────────────────────────────────────────────────────
 let map, guessMarker, answerMarker, distanceLine;
 let clubs = [], currentRound = 0, totalScore = 0, guessLatLng = null;
 
-// ── Init ─────────────────────────────────────────────────────────────────────
+
 function initMap() {
   map = L.map('map', {
     center: [20, 10],
@@ -301,12 +190,10 @@ function initMap() {
     maxBounds: [[-90, -200], [90, 200]],
     worldCopyJump: false,
   });
-
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '© <a href="https://openstreetmap.org">OpenStreetMap</a>',
     maxZoom: 18,
   }).addTo(map);
-
   map.on('click', onMapClick);
 }
 
@@ -360,18 +247,15 @@ function loadRound() {
   document.getElementById('submitBtn').disabled = true;
   document.getElementById('clearBtn').disabled = true;
   document.getElementById('hint').textContent = 'Click anywhere on the map to drop your pin';
-
   const club = clubs[currentRound];
   document.getElementById('roundNum').textContent = currentRound + 1;
   document.getElementById('totalRounds').textContent = ROUNDS_PER_GAME;
-  document.getElementById('clubName').textContent = club.name;
-  document.getElementById('clubLeague').textContent = club.league;
+  document.getElementById('clubName').textContent = club[0];
+  document.getElementById('clubLeague').textContent = club[1];
   updateDots(currentRound, false);
-
   map.setView([20, 10], 2);
 }
 
-// ── Map interactions ──────────────────────────────────────────────────────────
 const guessIcon = L.divIcon({
   className: '',
   html: `<div style="width:22px;height:22px;background:#2563eb;border:3px solid #fff;border-radius:50%;box-shadow:0 2px 6px rgba(0,0,0,.4);"></div>`,
@@ -407,7 +291,6 @@ function clearMapLayers() {
   guessMarker = answerMarker = distanceLine = null;
 }
 
-// ── Scoring ───────────────────────────────────────────────────────────────────
 function haversineKm(lat1, lng1, lat2, lng2) {
   const R = 6371;
   const dLat = (lat2 - lat1) * Math.PI / 180;
@@ -427,44 +310,31 @@ function formatDist(km) {
   return km < 1 ? `${Math.round(km * 1000)} m` : `${Math.round(km).toLocaleString()} km`;
 }
 
-// ── Submit ────────────────────────────────────────────────────────────────────
 function submitGuess() {
   if (!guessLatLng) return;
   map.off('click', onMapClick);
-
   const club = clubs[currentRound];
-  const dist = haversineKm(guessLatLng.lat, guessLatLng.lng, club.lat, club.lng);
+  const dist = haversineKm(guessLatLng.lat, guessLatLng.lng, club[2], club[3]);
   const pts  = distToScore(dist);
   totalScore += pts;
-
-  // Show answer pin
-  const answerLL = L.latLng(club.lat, club.lng);
+  const answerLL = L.latLng(club[2], club[3]);
   answerMarker = L.marker(answerLL, { icon: answerIcon }).addTo(map)
-    .bindTooltip(club.name, { permanent: true, direction: 'top' });
-
-  // Draw dashed line
+    .bindTooltip(club[0], { permanent: true, direction: 'top' });
   distanceLine = L.polyline([guessLatLng, answerLL], {
     color: '#f59e0b', weight: 2, dashArray: '6 4', opacity: .8,
   }).addTo(map);
-
-  // Fit both markers
   map.fitBounds(L.latLngBounds([guessLatLng, answerLL]).pad(.25));
-
-  // Result overlay
   const emoji = pts >= 4000 ? '🎯' : pts >= 2500 ? '👍' : pts >= 1000 ? '😅' : '💀';
   const cls   = pts >= 3000 ? 'great' : pts >= 1200 ? 'ok' : 'bad';
-
   document.getElementById('resultEmoji').textContent = emoji;
   document.getElementById('resultPts').textContent = `+${pts.toLocaleString()} pts`;
   document.getElementById('resultPts').className = `result-pts ${cls}`;
   document.getElementById('resultDist').textContent = `You were ${formatDist(dist)} away`;
-  document.getElementById('clubLabel').textContent = club.name;
-  document.getElementById('resultLoc').textContent = `📍 ${club.ground}`;
+  document.getElementById('clubLabel').textContent = club[0];
+  document.getElementById('resultLoc').textContent = `📍 ${club[4]}`;
   document.getElementById('totalScore').textContent = totalScore.toLocaleString();
-
   const isLast = currentRound === ROUNDS_PER_GAME - 1;
   document.getElementById('nextBtn').textContent = isLast ? 'See final score' : 'Next club →';
-
   updateDots(currentRound, true);
   document.getElementById('resultOverlay').classList.remove('hidden');
 }
@@ -473,7 +343,6 @@ function nextRound() {
   document.getElementById('resultOverlay').classList.add('hidden');
   map.on('click', onMapClick);
   currentRound++;
-
   if (currentRound >= ROUNDS_PER_GAME) {
     showEndScreen();
   } else {
@@ -488,15 +357,50 @@ function showEndScreen() {
               pct >= 55 ? '👏 Solid effort — you know your grounds.' :
               pct >= 30 ? '🗺️ Not bad, keep exploring.' :
                           '😬 Time to study some maps...';
-
   document.getElementById('finalScore').textContent = totalScore.toLocaleString();
   document.getElementById('finalSub').textContent = `${pct}% of possible points · ${msg}`;
   document.getElementById('endOverlay').classList.remove('hidden');
 }
 
-// ── Boot ──────────────────────────────────────────────────────────────────────
-initMap();
-startGame();
+(function () {
+  var bar = document.getElementById('progressBar');
+  var lbl = document.getElementById('loadPct');
+  fetch('clubs.json')
+    .then(function (res) {
+      var total = parseInt(res.headers.get('Content-Length') || '0', 10);
+      var loaded = 0;
+      var chunks = [];
+      var reader = res.body.getReader();
+      function pump() {
+        return reader.read().then(function (x) {
+          if (x.done) { return new Blob(chunks).text(); }
+          chunks.push(x.value);
+          loaded += x.value.length;
+          if (total) {
+            var pct = Math.round(loaded / total * 100);
+            bar.style.width = pct + '%';
+            lbl.textContent = pct + '%';
+          }
+          return pump();
+        });
+      }
+      return pump();
+    })
+    .then(function (text) {
+      ALL_CLUBS = JSON.parse(text);
+      bar.style.width = '100%';
+      lbl.textContent = '100%';
+      setTimeout(function () {
+        document.getElementById('loading').classList.add('hidden');
+        initMap();
+        startGame();
+      }, 250);
+    })
+    .catch(function () {
+      document.querySelector('#loading p').textContent = 'Failed to load — please refresh.';
+    });
+})();
 </script>
 </body>
 </html>
+
